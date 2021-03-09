@@ -6,8 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -21,28 +20,51 @@ public class Main extends Application {
     private AnchorPane anchor;
     private Button btn1, btn2, btn3;
     private Label lbl;
+    private MenuBar mnbPrincipal;
+    private Menu menCompetencia1, menCompetencia2, menCerrar;
+    private MenuItem mitCalcu, mitSalir;
+    private Scene escena;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-
         CrearUI();
 
         primaryStage.setTitle("Proyecto de clase Topicos avanzados de programacion 2021");
-        primaryStage.setScene(new Scene(anchor, 300, 70));
+        primaryStage.setScene(escena);
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
     private void CrearUI() {
-        CrearButton();
-        CrearAnchorPane();
+        vBox = new VBox();
+        CrearMenu();
+        CrearEscena();
+    }
+    private void CrearEscena(){
+        vBox.getChildren().add(mnbPrincipal);
+        escena = new Scene(vBox, 300, 70);
+    }
+
+    private void CrearMenu(){
+        mnbPrincipal = new MenuBar();
+        menCompetencia1 = new Menu("Competencia 1");
+        menCompetencia2 = new Menu("Competencia 2");
+        menCerrar = new Menu("Cerrar");
+        mnbPrincipal.getMenus().addAll(menCompetencia1, menCompetencia2, menCerrar);
+
+        mitCalcu = new MenuItem("Calculadora");
+        menCompetencia1.getItems().add(mitCalcu);
+
+        mitSalir = new MenuItem("Salir");
+        mitSalir.setOnAction(event -> {System.exit(0);});
+        menCerrar.getItems().add(mitSalir);
     }
 
     private void CrearButton(){
         btn1 = new Button("Boton 1");
         btn2 = new Button("Boton 2");
         btn3 = new Button("Boton 3");
-        CambiarColorButton();
-        CambiarTamanoButton();
     }
 
     private void CambiarColorButton(){
@@ -64,7 +86,7 @@ public class Main extends Application {
         hBox.setPadding(new Insets(20));
     }
 
-    private void CrarVBox(){
+    private void CrearVBox(){
         vBox = new VBox();
         vBox.getChildren().addAll(btn1, btn2, btn3);
         vBox.setSpacing(10);
