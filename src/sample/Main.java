@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import sample.views.Calculadora;
+import sample.views.Rompecabezas;
 
 public class Main extends Application {
 
@@ -22,7 +24,7 @@ public class Main extends Application {
     private Label lbl;
     private MenuBar mnbPrincipal;
     private Menu menCompetencia1, menCompetencia2, menCerrar;
-    private MenuItem mitCalcu, mitSalir;
+    private MenuItem mitCalcu,mitRompecabezas, mitSalir;
     private Scene escena;
 
     @Override
@@ -54,11 +56,21 @@ public class Main extends Application {
         mnbPrincipal.getMenus().addAll(menCompetencia1, menCompetencia2, menCerrar);
 
         mitCalcu = new MenuItem("Calculadora");
-        menCompetencia1.getItems().add(mitCalcu);
+        mitCalcu.setOnAction(event -> opcionesMenu(1));
+        mitRompecabezas = new MenuItem("Rompecabezas");
+        mitRompecabezas.setOnAction(event -> opcionesMenu(2));
+        menCompetencia1.getItems().addAll(mitCalcu,mitRompecabezas);
 
         mitSalir = new MenuItem("Salir");
         mitSalir.setOnAction(event -> {System.exit(0);});
         menCerrar.getItems().add(mitSalir);
+    }
+
+    private void opcionesMenu(int opc) {
+        switch (opc){
+            case 1: new Calculadora();break;
+            case 2: new Rompecabezas();break;
+        }
     }
 
     private void CrearButton(){
