@@ -4,8 +4,8 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -17,14 +17,16 @@ import javafx.stage.Stage;
 
 public class Rompecabezas extends Stage implements EventHandler {
 
-    private String[] arImagenes = {"fila-1-col-1.jpg","fila-1-col-2.jpg","fila-1-col-3.jpg","fila-1-col-4.jpg","fila-2-col-1.jpg","fila-2-col-2.jpg","fila-2-col-3.jpg","fila-2-col-4.jpg","fila-3-col-1.jpg","fila-3-col-2.jpg","fila-3-col-3.jpg","fila-3-col-4.jpg","fila-4-col-1.jpg","fila-4-col-2.jpg","fila-4-col-3.jpg","fila-4-col-4.jpg",};
+    private String[] arImagenes;// = {"fila-1-col-1.jpg","fila-1-col-2.jpg","fila-1-col-3.jpg","fila-1-col-4.jpg","fila-2-col-1.jpg","fila-2-col-2.jpg","fila-2-col-3.jpg","fila-2-col-4.jpg","fila-3-col-1.jpg","fila-3-col-2.jpg","fila-3-col-3.jpg","fila-3-col-4.jpg","fila-4-col-1.jpg","fila-4-col-2.jpg","fila-4-col-3.jpg","fila-4-col-4.jpg",};
     private String[][] arAsignacion;
+    private String dir;
+
     private BorderPane borderPane;
     private GridPane tablero;
     private Button[][] btnTarjetas;
     private HBox hBox;
     private Label lblTarjetas;
-    private TextField txtTarjetas;
+    private ChoiceBox chBTamano;
     private Button btnMesclar;
     private Scene escena;
 
@@ -41,31 +43,42 @@ public class Rompecabezas extends Stage implements EventHandler {
 
     private void CrearUI() {
         borderPane = new BorderPane();
-        lblTarjetas = new Label("Cantidad de Piezas");
-        txtTarjetas = new TextField();
+        lblTarjetas = new Label("Tamaño");
+        chBTamano = new ChoiceBox();
+
+        //Crear ChoiceBox
+        chBTamano.getItems().addAll("3x3", "4x4", "5x5");
+        chBTamano.getSelectionModel().select(1);
+
         btnMesclar = new Button("Mesclar Tarjetas");
         btnMesclar.addEventHandler(MouseEvent.MOUSE_CLICKED,this);
         hBox = new HBox();
-        hBox.getChildren().addAll(lblTarjetas,txtTarjetas,btnMesclar);
+        hBox.getChildren().addAll(lblTarjetas,chBTamano,btnMesclar);
 
         borderPane.setTop(hBox);
 
         tablero = new GridPane();
         borderPane.setCenter(tablero);
 
-        escena = new Scene(borderPane, 800, 600);
+        escena = new Scene(borderPane, 900, 600);
     }
 
     @Override
     public void handle(Event event) {
-        noPiezas = Integer.parseInt(txtTarjetas.getText());
-        btnTarjetas =  new Button[noPiezas][noPiezas];
-        arAsignacion = new String[4][4];
-        revolver();
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
+        vaciarArBotones();
 
-                Image img = new Image("sample/assets/"+arAsignacion[i][j]);
+        noPiezas = chBTamano.getSelectionModel().getSelectedIndex() + 3;
+        btnTarjetas =  new Button[noPiezas][noPiezas];
+        arAsignacion = new String[noPiezas][noPiezas];
+
+        dir = noPiezas+"x"+noPiezas+"/";
+
+        crearArImagenes();
+        revolver();
+        for (int i = 0; i < noPiezas; i++) {
+            for (int j = 0; j < noPiezas; j++) {
+
+                Image img = new Image("/sample/assets/rompecabezas/"+dir+arAsignacion[i][j]);
                 ImageView imv = new ImageView(img);
                 imv.setFitHeight(120);
                 imv.setPreserveRatio(true);
@@ -81,19 +94,55 @@ public class Rompecabezas extends Stage implements EventHandler {
         }
     }
 
+    private void vaciarArBotones() {
+        for (int i = 0; i < noPiezas; i++) {
+            for (int j = 0; j < noPiezas; j++) {
+                btnTarjetas[i][j].setVisible(false);
+            }
+        }
+    }
+
+    private void crearArImagenes() {
+        arImagenes = new String[noPiezas*noPiezas];
+
+        for (int i = 0; i < noPiezas; i++) {
+            for (int j = 0; j < noPiezas; j++) {
+                arImagenes[(i * noPiezas) + j] = "fila-"+(i+1)+"-col-"+(j+1)+".jpg";
+            }
+        }
+    }
+
+    private void revolver(){
+        for (int i = 0; i < noPiezas; i++) {
+            for (int j = 0; j < noPiezas; j++) {
+                arAsignacion[i][j] = new String();
+            }
+        }
+
+        int posx, posy = 0;
+        for (int i = 0; i < arImagenes.length;) {
+            posx = (int)(Math.random()*noPiezas);
+            posy = (int)(Math.random()*noPiezas);
+            if(arAsignacion[posx][posy].equals("")){
+                arAsignacion[posx][posy] = arImagenes[i];
+                i++;
+            }
+        }
+    }
+
     private void intercambio(int i, int j) {
         if (!bandera){
             bandera = !bandera;
             xTemp = i;
             yTemp = j;
         }else{
-            Image img = new Image("sample/assets/"+arAsignacion[i][j]);
+            Image img = new Image("sample/assets/rompecabezas/"+dir+arAsignacion[i][j]);
             ImageView imv = new ImageView(img);
             imv.setFitHeight(120);
             imv.setPreserveRatio(true);
 
 
-            Image img2 = new Image("sample/assets/"+arAsignacion[xTemp][yTemp]);
+            Image img2 = new Image("sample/assets/rompecabezas/"+dir+arAsignacion[xTemp][yTemp]);
             ImageView imv2 = new ImageView(img2);
             imv2.setFitHeight(120);
             imv2.setPreserveRatio(true);
@@ -108,24 +157,6 @@ public class Rompecabezas extends Stage implements EventHandler {
             btnTarjetas[i][j].setGraphic(imv2);
             bandera = !bandera;
 
-        }
-    }
-
-    private void revolver(){
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                arAsignacion[i][j] = new String();
-            }
-        }
-
-        int posx, posy = 0;
-        for (int i = 0; i < arImagenes.length;) {
-            posx = (int)(Math.random()*4);
-            posy = (int)(Math.random()*4);
-            if(arAsignacion[posx][posy].equals("")){
-                arAsignacion[posx][posy] = arImagenes[i];
-                i++;
-            }
         }
     }
 }
