@@ -1,0 +1,25 @@
+.root {
+    -fx-background-image: url(/sample/assets/abstract.png);
+    -fx-background-repeat: stretch ;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+.menu:hover {
+    -fx-background-color: #1A5276;
+    -fx-font-weight: bold;
+}
+
+.menu-bar {
+    -fx-background-color: #5B2C6F;
+    -fx-border-color: #566573;
+    -fx-border-width: 2;
+}
+
+.menu-item {
+    -fx-background-color: #5B2C6F;
+}
+
+.label {
+    -fx-text-fill: #FFFFFF;
+}

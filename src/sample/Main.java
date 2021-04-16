@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -10,9 +11,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import sample.views.Calculadora;
+import sample.views.Encriptador;
 import sample.views.Rompecabezas;
+import javafx.stage.WindowEvent;
 
-public class Main extends Application {
+public class Main extends Application implements EventHandler<WindowEvent> {
 
     private HBox hBox;
     private VBox vBox;
@@ -24,7 +27,7 @@ public class Main extends Application {
     private Label lbl;
     private MenuBar mnbPrincipal;
     private Menu menCompetencia1, menCompetencia2, menCerrar;
-    private MenuItem mitCalcu,mitRompecabezas, mitSalir;
+    private MenuItem mitCalcu,mitRompecabezas, mitSalir, mitEncriptador;
     private Scene escena;
 
     @Override
@@ -32,6 +35,7 @@ public class Main extends Application {
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         CrearUI();
 
+        primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,this );
         primaryStage.setTitle("Proyecto de clase Topicos avanzados de programacion 2021");
         primaryStage.setScene(escena);
         primaryStage.setMaximized(true);
@@ -46,6 +50,7 @@ public class Main extends Application {
     private void CrearEscena(){
         vBox.getChildren().add(mnbPrincipal);
         escena = new Scene(vBox, 300, 70);
+        escena.getStylesheets().add(getClass().getResource("css/Styles.css").toExternalForm());
     }
 
     private void CrearMenu(){
@@ -59,7 +64,9 @@ public class Main extends Application {
         mitCalcu.setOnAction(event -> opcionesMenu(1));
         mitRompecabezas = new MenuItem("Rompecabezas");
         mitRompecabezas.setOnAction(event -> opcionesMenu(2));
-        menCompetencia1.getItems().addAll(mitCalcu,mitRompecabezas);
+        mitEncriptador = new MenuItem("Encriptador");
+        mitEncriptador.setOnAction(event -> opcionesMenu(3));
+        menCompetencia1.getItems().addAll(mitCalcu, mitRompecabezas, mitEncriptador);
 
         mitSalir = new MenuItem("Salir");
         mitSalir.setOnAction(event -> {System.exit(0);});
@@ -68,8 +75,9 @@ public class Main extends Application {
 
     private void opcionesMenu(int opc) {
         switch (opc){
-            case 1: new Calculadora();break;
-            case 2: new Rompecabezas();break;
+            case 1: new Calculadora(); break;
+            case 2: new Rompecabezas(); break;
+            case 3: new Encriptador(); break;
         }
     }
 
@@ -138,5 +146,14 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @Override
+    public void handle(WindowEvent windowEvent) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle("Mensaje del sistema");
+        alerta.setHeaderText("Gracias por usar el programa :D");
+        alerta.setContentText("Vuelva Pronto");
+        alerta.showAndWait();
     }
 }
