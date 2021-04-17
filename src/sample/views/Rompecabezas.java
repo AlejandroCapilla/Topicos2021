@@ -4,14 +4,16 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.w3c.dom.css.RGBColor;
 
 
 public class Rompecabezas extends Stage implements EventHandler {
@@ -47,7 +49,7 @@ public class Rompecabezas extends Stage implements EventHandler {
 
         //Crear ChoiceBox
         chBTamano.getItems().addAll("3x3", "4x4", "5x5");
-        chBTamano.getSelectionModel().select(1);
+        chBTamano.getSelectionModel().select(0);
 
         btnMesclar = new Button("Mesclar Tarjetas");
         btnMesclar.addEventHandler(MouseEvent.MOUSE_CLICKED,this);
@@ -67,7 +69,8 @@ public class Rompecabezas extends Stage implements EventHandler {
 
     @Override
     public void handle(Event event) {
-        vaciarArBotones();
+        limpiarGridPane();
+
 
         noPiezas = chBTamano.getSelectionModel().getSelectedIndex() + 3;
         btnTarjetas =  new Button[noPiezas][noPiezas];
@@ -83,7 +86,7 @@ public class Rompecabezas extends Stage implements EventHandler {
                 int finalJ = j;
 
                 btnTarjetas[i][j] = new Button();
-                btnTarjetas[i][j].setPrefSize(400,300);
+                btnTarjetas[i][j].setPrefSize(600,500);
 
                 agregarImagenBoton(i, j, i, j);
 
@@ -110,10 +113,10 @@ public class Rompecabezas extends Stage implements EventHandler {
         btnTarjetas[xAux][yAux].setBackground(new Background(myBI));
     }
 
-    private void vaciarArBotones() {
+    private void limpiarGridPane() {
         for (int i = 0; i < noPiezas; i++) {
             for (int j = 0; j < noPiezas; j++) {
-                btnTarjetas[i][j].setVisible(false);
+                tablero.getChildren().remove(btnTarjetas[i][j]);
             }
         }
     }
@@ -164,7 +167,11 @@ public class Rompecabezas extends Stage implements EventHandler {
             bandera = !bandera;
 
             if (comprobarArmado()) {
-                System.out.println("Esta Armado");
+                Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+                alerta.setTitle("Rompecabezas");
+                alerta.setHeaderText("Has resuelto el Rompecabezas :D!!!");
+                alerta.setContentText("Intetar nuevamente");
+                alerta.showAndWait();
             }
 
         }
