@@ -2,6 +2,7 @@ package sample.views;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -9,9 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 
@@ -54,6 +53,8 @@ public class Rompecabezas extends Stage implements EventHandler {
         btnMesclar.addEventHandler(MouseEvent.MOUSE_CLICKED,this);
         hBox = new HBox();
         hBox.getChildren().addAll(lblTarjetas,chBTamano,btnMesclar);
+        hBox.setPadding(new Insets(10));
+        hBox.setSpacing(10);
 
         borderPane.setTop(hBox);
 
@@ -61,6 +62,7 @@ public class Rompecabezas extends Stage implements EventHandler {
         borderPane.setCenter(tablero);
 
         escena = new Scene(borderPane, 900, 600);
+        escena.getStylesheets().add(getClass().getResource("../css/StylesRompecabezas.css").toExternalForm());
     }
 
     @Override
@@ -77,21 +79,35 @@ public class Rompecabezas extends Stage implements EventHandler {
         revolver();
         for (int i = 0; i < noPiezas; i++) {
             for (int j = 0; j < noPiezas; j++) {
-
-                Image img = new Image("/sample/assets/rompecabezas/"+dir+arAsignacion[i][j]);
-                ImageView imv = new ImageView(img);
-                imv.setFitHeight(120);
-                imv.setPreserveRatio(true);
-
-                btnTarjetas[i][j] = new Button();
                 int finalI = i;
                 int finalJ = j;
+
+                btnTarjetas[i][j] = new Button();
+                btnTarjetas[i][j].setPrefSize(400,300);
+
+                agregarImagenBoton(i, j, i, j);
+
                 btnTarjetas[i][j].setOnAction(event1 -> intercambio(finalI, finalJ));
-                btnTarjetas[i][j].setGraphic(imv);
-                btnTarjetas[i][j].setPrefSize(50,50);
+
                 tablero.add(btnTarjetas[i][j],j,i);
             }
         }
+    }
+
+    /*private void agregarImagenBoton(int x, int y, int xAux, int yAux) {
+        Image img = new Image("sample/assets/rompecabezas/"+dir+arAsignacion[x][y]);
+        ImageView imv = new ImageView(img);
+        //imv.setFitHeight(100);
+        imv.setPreserveRatio(true);
+        btnTarjetas[xAux][yAux].setGraphic(imv);
+    }*/
+
+    //Agregar un Background a un boton
+    private void agregarImagenBoton(int x, int y, int xAux, int yAux) {
+        BackgroundImage myBI= new BackgroundImage(new Image("sample/assets/rompecabezas/"+dir+arAsignacion[x][y],320,320,false,true),
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(1.0, 1.0, true, true, false, false));
+
+        btnTarjetas[xAux][yAux].setBackground(new Background(myBI));
     }
 
     private void vaciarArBotones() {
@@ -136,27 +152,40 @@ public class Rompecabezas extends Stage implements EventHandler {
             xTemp = i;
             yTemp = j;
         }else{
-            Image img = new Image("sample/assets/rompecabezas/"+dir+arAsignacion[i][j]);
-            ImageView imv = new ImageView(img);
-            imv.setFitHeight(120);
-            imv.setPreserveRatio(true);
+            agregarImagenBoton(i, j, xTemp, yTemp);
 
-
-            Image img2 = new Image("sample/assets/rompecabezas/"+dir+arAsignacion[xTemp][yTemp]);
-            ImageView imv2 = new ImageView(img2);
-            imv2.setFitHeight(120);
-            imv2.setPreserveRatio(true);
+            agregarImagenBoton(xTemp, yTemp, i, j);
 
             //esto hice para que funcionara
             String aux = arAsignacion[i][j];
             arAsignacion[i][j] = arAsignacion[xTemp][yTemp];
             arAsignacion[xTemp][yTemp] = aux;
 
-
-            btnTarjetas[xTemp][yTemp].setGraphic(imv);
-            btnTarjetas[i][j].setGraphic(imv2);
             bandera = !bandera;
 
+            if (comprobarArmado()) {
+                System.out.println("Esta Armado");
+            }
+
         }
+    }
+
+    private boolean comprobarArmado() {
+        boolean estaArmado = true;
+        int i = 0, j;
+
+        do {
+            j = 0;
+            do {
+                String nombre = "fila-"+(i + 1)+"-col-"+(j + 1)+".jpg";
+                if (!arAsignacion[i][j].equals(nombre)) {
+                    estaArmado = false;
+                }
+                j++;
+            }while(j < noPiezas && estaArmado);
+            i++;
+        }while(i < noPiezas && estaArmado);
+
+        return estaArmado;
     }
 }

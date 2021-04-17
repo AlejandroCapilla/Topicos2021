@@ -1,4 +1,4 @@
 .button {
     -fx-text-fill: #5A2A6A;
-    -fx-border-radius: 1;
+    -fx-background-radius: 0;
 }
