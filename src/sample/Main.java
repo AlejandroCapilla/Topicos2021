@@ -10,8 +10,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import sample.models.Conexion;
 import sample.views.Calculadora;
 import sample.views.Encriptador;
+import sample.views.FrmCanciones;
 import sample.views.Rompecabezas;
 import javafx.stage.WindowEvent;
 
@@ -27,7 +29,7 @@ public class Main extends Application implements EventHandler<WindowEvent> {
     private Label lbl;
     private MenuBar mnbPrincipal;
     private Menu menCompetencia1, menCompetencia2, menCerrar;
-    private MenuItem mitCalcu,mitRompecabezas, mitSalir, mitEncriptador;
+    private MenuItem mitCalcu,mitRompecabezas, mitSalir, mitEncriptador, mitBDCanciones;
     private Scene escena;
 
     @Override
@@ -40,6 +42,9 @@ public class Main extends Application implements EventHandler<WindowEvent> {
         primaryStage.setScene(escena);
         primaryStage.setMaximized(true);
         primaryStage.show();
+
+        //Abrimos la conexion de manera Global
+        Conexion.getConexion();
     }
 
     private void CrearUI() {
@@ -47,6 +52,7 @@ public class Main extends Application implements EventHandler<WindowEvent> {
         CrearMenu();
         CrearEscena();
     }
+
     private void CrearEscena(){
         vBox.getChildren().add(mnbPrincipal);
         escena = new Scene(vBox, 300, 70);
@@ -66,7 +72,10 @@ public class Main extends Application implements EventHandler<WindowEvent> {
         mitRompecabezas.setOnAction(event -> opcionesMenu(2));
         mitEncriptador = new MenuItem("Encriptador");
         mitEncriptador.setOnAction(event -> opcionesMenu(3));
-        menCompetencia1.getItems().addAll(mitCalcu, mitRompecabezas, mitEncriptador);
+        mitBDCanciones = new MenuItem("BDCanciones");
+        mitBDCanciones.setOnAction(event -> opcionesMenu(4));
+
+        menCompetencia1.getItems().addAll(mitCalcu, mitRompecabezas, mitEncriptador,mitBDCanciones);
 
         mitSalir = new MenuItem("Salir");
         mitSalir.setOnAction(event -> {System.exit(0);});
@@ -78,6 +87,7 @@ public class Main extends Application implements EventHandler<WindowEvent> {
             case 1: new Calculadora(); break;
             case 2: new Rompecabezas(); break;
             case 3: new Encriptador(); break;
+            case 4: new FrmCanciones();
         }
     }
 

@@ -11,14 +11,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.w3c.dom.css.RGBColor;
-
 
 public class Rompecabezas extends Stage implements EventHandler {
 
-    private String[] arImagenes;// = {"fila-1-col-1.jpg","fila-1-col-2.jpg","fila-1-col-3.jpg","fila-1-col-4.jpg","fila-2-col-1.jpg","fila-2-col-2.jpg","fila-2-col-3.jpg","fila-2-col-4.jpg","fila-3-col-1.jpg","fila-3-col-2.jpg","fila-3-col-3.jpg","fila-3-col-4.jpg","fila-4-col-1.jpg","fila-4-col-2.jpg","fila-4-col-3.jpg","fila-4-col-4.jpg",};
+    private String[] arImagenes;
     private String[][] arAsignacion;
     private String dir;
 
@@ -71,7 +68,6 @@ public class Rompecabezas extends Stage implements EventHandler {
     public void handle(Event event) {
         limpiarGridPane();
 
-
         noPiezas = chBTamano.getSelectionModel().getSelectedIndex() + 3;
         btnTarjetas =  new Button[noPiezas][noPiezas];
         arAsignacion = new String[noPiezas][noPiezas];
@@ -108,7 +104,10 @@ public class Rompecabezas extends Stage implements EventHandler {
     //Agregar un Background a un boton
     private void agregarImagenBoton(int x, int y, int xAux, int yAux) {
         BackgroundImage myBI= new BackgroundImage(new Image("sample/assets/rompecabezas/"+dir+arAsignacion[x][y],320,320,false,true),
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(1.0, 1.0, true, true, false, false));
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(1.0, 1.0, true, true, false, false));
 
         btnTarjetas[xAux][yAux].setBackground(new Background(myBI));
     }
