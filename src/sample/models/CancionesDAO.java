@@ -2,7 +2,6 @@ package sample.models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -64,7 +63,7 @@ public class CancionesDAO {
 
     public void INSERT() {
         try {
-        String query = "INSERT tbl_canciones (nombre_cancion, duracion, portada, anio, letra)" +
+            String query = "INSERT tbl_canciones (nombre_cancion, duracion, portada, anio, letra)" +
                 "VALUES('"+nombre_cancion+"',"+duracion+",'"+portada+"',"+anio+",'"+letra+"')";
 
             Statement stmt = Conexion.conexion.createStatement();

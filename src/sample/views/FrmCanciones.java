@@ -1,6 +1,5 @@
 package sample.views;
 
-import com.sun.javafx.tk.ScreenConfigurationAccessor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;

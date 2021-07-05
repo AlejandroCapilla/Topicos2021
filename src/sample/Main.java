@@ -2,19 +2,15 @@ package sample;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import sample.models.Conexion;
-import sample.views.Calculadora;
-import sample.views.Encriptador;
-import sample.views.FrmCanciones;
-import sample.views.Rompecabezas;
+import sample.models.Conexion2;
+import sample.views.*;
 import javafx.stage.WindowEvent;
 
 public class Main extends Application implements EventHandler<WindowEvent> {
@@ -29,7 +25,7 @@ public class Main extends Application implements EventHandler<WindowEvent> {
     private Label lbl;
     private MenuBar mnbPrincipal;
     private Menu menCompetencia1, menCompetencia2, menCerrar;
-    private MenuItem mitCalcu,mitRompecabezas, mitSalir, mitEncriptador, mitBDCanciones;
+    private MenuItem mitCalcu,mitRompecabezas, mitSalir, mitEncriptador, mitBDCanciones, mitCorredores, mitSocket, mitCrud, mitBatalla;
     private Scene escena;
 
     @Override
@@ -45,6 +41,7 @@ public class Main extends Application implements EventHandler<WindowEvent> {
 
         //Abrimos la conexion de manera Global
         Conexion.getConexion();
+        Conexion2.getConexion();
     }
 
     private void CrearUI() {
@@ -74,8 +71,21 @@ public class Main extends Application implements EventHandler<WindowEvent> {
         mitEncriptador.setOnAction(event -> opcionesMenu(3));
         mitBDCanciones = new MenuItem("BDCanciones");
         mitBDCanciones.setOnAction(event -> opcionesMenu(4));
+        mitCrud = new MenuItem("CRUD");
+        mitCrud.setOnAction(event -> opcionesMenu(7));
 
-        menCompetencia1.getItems().addAll(mitCalcu, mitRompecabezas, mitEncriptador,mitBDCanciones);
+        menCompetencia1.getItems().addAll(mitCalcu, mitRompecabezas, mitEncriptador,mitBDCanciones, mitCrud);
+
+        mitCorredores = new MenuItem("Ejecuciond e hilos");
+        mitCorredores.setOnAction(event -> opcionesMenu(5));
+
+        mitSocket = new MenuItem("Manejo de Sockets");
+        mitSocket.setOnAction(event -> opcionesMenu(6));
+
+        mitBatalla = new MenuItem("Batalla naval");
+        mitBatalla.setOnAction(event -> opcionesMenu(8));
+
+        menCompetencia2.getItems().addAll(mitCorredores, mitSocket,mitBatalla);
 
         mitSalir = new MenuItem("Salir");
         mitSalir.setOnAction(event -> {System.exit(0);});
@@ -87,7 +97,11 @@ public class Main extends Application implements EventHandler<WindowEvent> {
             case 1: new Calculadora(); break;
             case 2: new Rompecabezas(); break;
             case 3: new Encriptador(); break;
-            case 4: new FrmCanciones();
+            case 4: new FrmCanciones(); break;
+            case 5: new Pista(); break;
+            case 6: new ClienteSocket().connectToServer(); break;
+            case 7: new FrmCrud(); break;
+            case 8: new BatallaNaval();
         }
     }
 

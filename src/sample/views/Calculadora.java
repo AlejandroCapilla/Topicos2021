@@ -1,6 +1,5 @@
 package sample.views;
 
-import com.sun.scenario.effect.impl.sw.java.JSWBlend_SRC_OUTPeer;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,7 +18,8 @@ public class Calculadora extends Stage {
     private TextField txtOperacion;
     private HBox[] hBoxes;
     private Button[] arBotones;
-    private char[] arNumeros = {'7','8','9','/','4','5','6','*','1','2','3','+','0',' ','=','-'};
+    private Button btnBorrar;
+    private char[] arNumeros = {'7','8','9','/','4','5','6','*','1','2','3','+','0','.','=','-'};
 
     private double num1, num2;
     private char operacion;
@@ -47,6 +47,8 @@ public class Calculadora extends Stage {
 
         hBoxes = new HBox[4];
         arBotones = new Button[16];
+        btnBorrar = new Button("Borrar");
+        btnBorrar.setOnAction(event -> borrar());
 
         int pos = 0;
         for (int i = 0; i < hBoxes.length; i++) {
@@ -61,12 +63,17 @@ public class Calculadora extends Stage {
                 pos++;
             }
         }
-        vBox.getChildren().addAll(txtOperacion, hBoxes[0], hBoxes[1], hBoxes[2], hBoxes[3]);
+        vBox.getChildren().addAll(txtOperacion, hBoxes[0], hBoxes[1], hBoxes[2], hBoxes[3], btnBorrar);
         escena = new Scene(vBox,200,250);
         escena.getStylesheets().add(getClass().getResource("../css/StylesCalcu.css").toExternalForm());
     }
 
-    public double realizarOperacion(){
+    private void borrar() {
+        setContadorOperandos(0);
+        txtOperacion.setText("");
+    }
+
+    public double realizarOperacion() {
         double resultado = 0;
         switch (operacion){
             case '+':
@@ -85,12 +92,20 @@ public class Calculadora extends Stage {
         return resultado;
     }
 
-    public void setNum1(double n){
-        num1 = n;
+    public void setNum1(String n){
+        if(n.contains(".")) {
+            num1 = Double.parseDouble(n+"0");
+        }else {
+            num1 = Double.parseDouble(n);
+        }
     }
 
-    public void setNum2(double n){
-        num2 = n;
+    public void setNum2(String n){
+        if(n.contains(".")) {
+            num2 = Double.parseDouble(n+"0");
+        }else {
+            num2 = Double.parseDouble(n);
+        }
     }
     public void setOperacion(char o){
         operacion = o;
@@ -123,6 +138,7 @@ public class Calculadora extends Stage {
     }
 
 }
+
 class EventoCalcu implements EventHandler{
     char tecla;
     Calculadora calcu;
@@ -136,10 +152,21 @@ class EventoCalcu implements EventHandler{
     public void handle(Event event) {
         int asciiValue = tecla;
 
-        if(asciiValue >= 48 && asciiValue <= 57 ){
+        if(asciiValue >= 48 && asciiValue <= 57){
             calcu.setTxtOperacion(tecla);
         }else{
             switch (tecla){
+                case '.':
+                    if(calcu.getContadorOperandos() == 0) {
+                        if(!calcu.getTxtOperacion().contains(".")) {
+                            calcu.setTxtOperacion(tecla);
+                        }
+                    }else {
+                        if(!calcu.getTxtOperacion().substring(calcu.getPosNum2()).contains(".")) {
+                            calcu.setTxtOperacion(tecla);
+                        }
+                    }
+                    break;
                 case '-':
                     if (calcu.getTxtOperacion() == ""){
                         calcu.setTxtOperacion(tecla);
@@ -148,7 +175,7 @@ class EventoCalcu implements EventHandler{
                             if (restriccionOperacionMenos()){
                                 if(calcu.getTxtOperacion().charAt(calcu.getTxtOperacion().length()-1) != '*'){
                                     if(calcu.getTxtOperacion().charAt(calcu.getTxtOperacion().length()-1) != '/'){
-                                        calcu.setNum1(Double.parseDouble(calcu.getTxtOperacion()));
+                                        calcu.setNum1(calcu.getTxtOperacion());
                                         calcu.setPosNum2(calcu.getTxtOperacion().length()+1);
                                         calcu.setContadorOperandos(1);
 
@@ -167,7 +194,7 @@ class EventoCalcu implements EventHandler{
                         if(!calcu.getTxtOperacion().equals("")){
                             if(restriccionOperacion()){
                                 if(calcu.getContadorOperandos() == 0){
-                                    calcu.setNum1(Double.parseDouble(calcu.getTxtOperacion()));
+                                    calcu.setNum1(calcu.getTxtOperacion());
                                     calcu.setContadorOperandos(1);
                                     calcu.setPosNum2(calcu.getTxtOperacion().length()+1);
                                     calcu.setTxtOperacion(tecla);
@@ -180,13 +207,14 @@ class EventoCalcu implements EventHandler{
                 case '=':
                     if(calcu.getContadorOperandos() == 1){
                         if(!calcu.getTxtOperacion().substring(calcu.getPosNum2()).equals("")){
-                            calcu.setNum2(Double.parseDouble(calcu.getTxtOperacion().substring(calcu.getPosNum2())));
+                            calcu.setNum2(calcu.getTxtOperacion().substring(calcu.getPosNum2()));
                             calcu.mostrarResultado(calcu.realizarOperacion());
                         }
                     }
             }
         }
     }
+
     //retorna true si la tecla puede ser escrita
     boolean restriccionOperacion(){
         boolean b;

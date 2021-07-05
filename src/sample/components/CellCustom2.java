@@ -4,21 +4,21 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
-import sample.models.CancionesDAO;
-import sample.views.frmCancion;
+import sample.models.CrudDAO;
+import sample.views.frmProducto;
 
 import java.util.Optional;
 
-public class CellCustom extends TableCell<CancionesDAO, String> {
+public class CellCustom2 extends TableCell<CrudDAO, String> {
     private Button btnCelda;
-    private CancionesDAO objCDao;
+    private CrudDAO objCDao;
 
-    public CellCustom(int opc) {
+    public CellCustom2(int opc) {
         if(opc == 1) {
             btnCelda = new Button("Editar");
             btnCelda.setOnAction(event -> {
-                objCDao = CellCustom.this.getTableView().getItems().get(CellCustom.this.getIndex());
-                new frmCancion(CellCustom.this.getTableView(),objCDao);
+                objCDao = CellCustom2.this.getTableView().getItems().get(CellCustom2.this.getIndex());
+                new frmProducto(CellCustom2.this.getTableView(),objCDao);
             });
 
         }else {
@@ -29,10 +29,10 @@ public class CellCustom extends TableCell<CancionesDAO, String> {
                 alerta.setContentText("Realmente deseas borrar el registro");
                 Optional<ButtonType> result = alerta.showAndWait();
                 if(result.get() == ButtonType.OK) {
-                    objCDao = CellCustom.this.getTableView().getItems().get(CellCustom.this.getIndex());
+                    objCDao = CellCustom2.this.getTableView().getItems().get(CellCustom2.this.getIndex());
                     objCDao.DELETE();
-                    CellCustom.this.getTableView().setItems(objCDao.SELECT());
-                    CellCustom.this.getTableView().refresh();
+                    CellCustom2.this.getTableView().setItems(objCDao.SELECT());
+                    CellCustom2.this.getTableView().refresh();
                 }
             });
         }
