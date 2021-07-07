@@ -1,5 +1,6 @@
 package sample.views;
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -27,6 +28,7 @@ public class BatallaNaval extends Stage implements EventHandler {
     private Button[][] btnPosiciones;
     private GridPane tableroE;
     private Button[][] btnPosicionesE;
+    private Label lblMensaje;
 
     //Conexion
     private Socket socket;
@@ -34,7 +36,51 @@ public class BatallaNaval extends Stage implements EventHandler {
     ClienteBatallaNaval cliente;
 
     private int cantBarcos;
+    private boolean turno;
 
+    private String entrada;
+    private String aux;
+
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            // Esto se ejecuta en segundo plano una única vez
+            while (true) {
+                // Pero usamos un truco y hacemos un ciclo infinito
+                try {
+                    // En él, hacemos que el hilo duerma
+                    Thread.sleep(1000);
+                    // Y después realizamos las operaciones
+
+                    entrada = cliente.obtenerDatos();
+
+                    javafx.application.Platform.runLater(
+                            () -> {
+                                switch (entrada.charAt(0)) {
+                                    case 'N':
+                                        txtCantBarcos.setText(entrada.substring(1));
+                                        txtCantBarcos.setDisable(true);
+                                        btnListo.setDisable(true);
+                                        cantBarcos = Integer.parseInt(txtCantBarcos.getText());
+                                        lblMensaje.setText("Posiciona tus piezas en el tanlero");
+                                        aux = "Es turno de tu oponente";
+                                        break;
+                                    case 'D':
+                                        verificarDisparo(entrada.substring(1));
+                                        turno = true;
+                                        lblMensaje.setText("Es tu turno!!!");
+                                        break;
+                                }
+                            });
+
+                    // Así, se da la impresión de que se ejecuta cada cierto tiempo
+                } catch (InterruptedException | IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Catch Runable");
+                }
+            }
+        }
+    };
 
     public BatallaNaval() {
         crearUI();
@@ -52,6 +98,9 @@ public class BatallaNaval extends Stage implements EventHandler {
         }
         cliente = new ClienteBatallaNaval(socket,host);
         cliente.connectToServer();
+
+        Thread hilo = new Thread(runnable);
+        hilo.start();
     }
 
     private void crearUI() {
@@ -72,6 +121,8 @@ public class BatallaNaval extends Stage implements EventHandler {
         hBoxOpc.setPadding(new Insets(10));
         hBoxOpc.setSpacing(10);
         hBoxOpc.getChildren().addAll(lblCant, txtCantBarcos, btnListo);
+
+        lblMensaje = new Label("Ingrese la cantidad de piezas");
 
         tableroE = new GridPane();
         tableroE.setPadding(new Insets(5));
@@ -107,20 +158,29 @@ public class BatallaNaval extends Stage implements EventHandler {
             }
         }
 
-
-        vBox.getChildren().addAll(hBoxOpc,tableroE,tablero);
+        vBox.getChildren().addAll(hBoxOpc, lblMensaje, tableroE,tablero);
 
         escena = new Scene(vBox,300,600);
     }
 
     private void PosicionE(int finalI, int finalJ) {
+        if(turno) {
+            cliente.mandarDatos("D"+finalI+" "+finalJ);
 
+            lblMensaje.setText("Es turno de tu oponente");
+
+            turno = false;
+        }
     }
 
     private void Posicion(int finalI, int finalJ) {
         if (cantBarcos > 0) {
             agregarImagenBoton(finalI, finalJ);
             cantBarcos = cantBarcos-1;
+        }
+
+        if (cantBarcos == 0) {
+            lblMensaje.setText(aux);
         }
     }
 
@@ -130,6 +190,9 @@ public class BatallaNaval extends Stage implements EventHandler {
         try {
             cant = Integer.parseInt(txtCantBarcos.getText());
             cliente.mandarDatos("N"+cant);
+            turno = true;
+            lblMensaje.setText("Posiciona tus piezas en el tanlero");
+            aux = "Es tu turno!!!";
 
             cantBarcos = cant;
             txtCantBarcos.setDisable(true);
@@ -147,5 +210,31 @@ public class BatallaNaval extends Stage implements EventHandler {
                 new BackgroundSize(1.0, 1.0, true, true, false, false));
 
         btnPosiciones[x][y].setBackground(new Background(myBI));
+        btnPosiciones[x][y].setDisable(true);
+    }
+
+    private void agregarImagenBoton2(int x, int y) {
+        BackgroundImage myBI= new BackgroundImage(new Image("sample/assets/equis.JPG",320,320,false,true),
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(1.0, 1.0, true, true, false, false));
+        //btnPosiciones[x][y].setBackground(null);
+        btnPosiciones[x][y].setBackground(new Background(myBI));
+    }
+
+    private void verificarDisparo(String coordenadas) {
+        String[] parts = coordenadas.split(" ");
+        String part1 = parts[0];
+        String part2 = parts[1];
+
+        int x, y;
+        x = Integer.parseInt(part1);
+        y = Integer.parseInt(part2);
+        System.out.println("Coordenadas: "+x+", "+y);
+
+        if(btnPosiciones[x][y].isDisable()) {
+            agregarImagenBoton2(x,y);
+        }
     }
 }

@@ -27,6 +27,12 @@ public class ClienteBatallaNaval {
         }
     }
 
+    public String obtenerDatos() throws IOException {
+        String e = entrada.readLine();
+
+        return e;
+    }
+
     public void mandarDatos(String num) {
         salida.println(num);
     }

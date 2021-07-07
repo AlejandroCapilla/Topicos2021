@@ -2,7 +2,6 @@ package sample.models;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import java.awt.image.BufferedImage;
 import java.io.*;
 public class Imagen {
     File file;
