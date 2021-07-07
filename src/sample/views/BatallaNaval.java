@@ -5,6 +5,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -36,10 +37,13 @@ public class BatallaNaval extends Stage implements EventHandler {
     ClienteBatallaNaval cliente;
 
     private int cantBarcos;
+    private int cantBarcosUndidos = 0;
     private boolean turno;
 
     private String entrada;
     private String aux;
+
+    private boolean juegoEmpezado;
 
     Runnable runnable = new Runnable() {
         @Override
@@ -64,12 +68,15 @@ public class BatallaNaval extends Stage implements EventHandler {
                                         cantBarcos = Integer.parseInt(txtCantBarcos.getText());
                                         lblMensaje.setText("Posiciona tus piezas en el tanlero");
                                         aux = "Es turno de tu oponente";
+                                        juegoEmpezado = true;
                                         break;
                                     case 'D':
                                         verificarDisparo(entrada.substring(1));
                                         turno = true;
                                         lblMensaje.setText("Es tu turno!!!");
                                         break;
+                                    case 'G':
+                                        mostrarGanador(entrada.substring(1));
                                 }
                             });
 
@@ -179,8 +186,9 @@ public class BatallaNaval extends Stage implements EventHandler {
             cantBarcos = cantBarcos-1;
         }
 
-        if (cantBarcos == 0) {
+        if (cantBarcos == 0 && !juegoEmpezado) {
             lblMensaje.setText(aux);
+            juegoEmpezado = true;
         }
     }
 
@@ -221,6 +229,16 @@ public class BatallaNaval extends Stage implements EventHandler {
                 new BackgroundSize(1.0, 1.0, true, true, false, false));
         //btnPosiciones[x][y].setBackground(null);
         btnPosiciones[x][y].setBackground(new Background(myBI));
+        btnPosiciones[x][y].setDisable(false);
+        cantBarcosUndidos = cantBarcosUndidos+1;
+        if(cantBarcosUndidos == Integer.parseInt(txtCantBarcos.getText())){
+            cliente.mandarDatos("GHas ganado!!!");
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Batalla Naval");
+            alerta.setHeaderText("Haz perdido");
+            alerta.setContentText("ok");
+            alerta.showAndWait();
+        }
     }
 
     private void verificarDisparo(String coordenadas) {
@@ -236,5 +254,13 @@ public class BatallaNaval extends Stage implements EventHandler {
         if(btnPosiciones[x][y].isDisable()) {
             agregarImagenBoton2(x,y);
         }
+    }
+
+    private void mostrarGanador(String ganador) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle("Batalla Naval");
+        alerta.setHeaderText(ganador);
+        alerta.setContentText("ok");
+        alerta.showAndWait();
     }
 }
